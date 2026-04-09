@@ -8,6 +8,9 @@ on:
       - 'phpunit.xml.dist'
       - 'composer.json'
       - 'composer.lock'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -18,9 +21,13 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest]
         php: [8.4, 8.3]
-        laravel: [12.*, 11.*, 10.*]
+        laravel: [13.*, 12.*, 11.*, 10.*]
         stability: [prefer-lowest, prefer-stable]
+        livewire: [4.*, 3.*]
         include:
+          - laravel: 13.*
+            testbench: 11.*
+            pest: 4.*
           - laravel: 12.*
             testbench: 10.*
             pest: 3.*
@@ -30,13 +37,15 @@ jobs:
           - laravel: 10.*
             testbench: 8.*
             pest: 2.*
+        exclude:
+          - laravel: 10.*
+            livewire: 4.*
 
-
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }} - ${{ matrix.pest }}
+    name: PHP${{ matrix.php }} - Laravel${{ matrix.laravel }} - Livewire${{ matrix.livewire }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -52,7 +61,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest-plugin-laravel:${{ matrix.pest }}" --no-interaction --no-update
+          composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" "pestphp/pest-plugin-laravel:${{ matrix.pest }}" "livewire/livewire:${{ matrix.livewire }}" --no-interaction --no-update
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction
 
       - name: List Installed Dependencies

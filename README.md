@@ -7,17 +7,12 @@
 
 Easy to use Livewire component specifically for Select2. 
 
-Supports: 
-- Laravel 10
-- Laravel 11
-- Laravel 12
+Supports Laravel 10, 11, 12, 13
 
 ## Installation
 
 You can install the package via composer:
-This currently works on Livewire v3
-
-I haven't tested 2 yet. Let me know?!
+This currently works on Livewire V3 and V4
 
 ```bash
 composer require jackbayliss/livewire-select2
